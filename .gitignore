@@ -1,0 +1,7 @@
+build/
+*.hjp
+*.o
+*.d
+.DS_Store
+.cache/
+compile_commands.json
