@@ -6,8 +6,19 @@
   "license": "MIT",
   "language": "C++20",
   "repository": "https://github.com/ReoShiozawa/engine_core",
-  "keywords": ["game-engine", "ecs", "render-graph", "physics", "audio"],
+  "keywords": [
+    "game-engine",
+    "ecs",
+    "render-graph",
+    "physics",
+    "audio"
+  ],
   "dependencies": {},
-  "plugin": "engine_core.hjp",
-  "platforms": ["macos", "linux", "windows"]
+  "plugin": "build/engine_core.hjp",
+  "platforms": [
+    "macos",
+    "linux",
+    "windows"
+  ],
+  "ビルド": "make build/engine_core.hjp"
 }
