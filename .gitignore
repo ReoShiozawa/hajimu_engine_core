@@ -1,5 +1,5 @@
-build/
-*.hjp
+build/*
+!build/*.hjp
 *.o
 *.d
 .DS_Store
