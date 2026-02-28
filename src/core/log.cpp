@@ -23,7 +23,11 @@ void Logger::log(LogLevel level, const char* file, int line, const char* fmt, ..
     auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(
         now.time_since_epoch()) % 1000;
     struct tm tm_buf;
+#ifdef _WIN32
+    localtime_s(&tm_buf, &time_t_val);
+#else
     localtime_r(&time_t_val, &tm_buf);
+#endif
 
     char time_str[16];
     std::snprintf(time_str, sizeof(time_str), "%02d:%02d:%02d.%03d",

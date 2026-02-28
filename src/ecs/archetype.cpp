@@ -9,6 +9,23 @@
 #include <cassert>
 #include <numeric>
 
+#ifdef _WIN32
+#include <malloc.h>
+static inline void* engine_aligned_alloc(size_t align, size_t size) {
+    return _aligned_malloc(size, align);
+}
+static inline void engine_aligned_free(void* ptr) {
+    _aligned_free(ptr);
+}
+#else
+static inline void* engine_aligned_alloc(size_t align, size_t size) {
+    return std::aligned_alloc(align, size);
+}
+static inline void engine_aligned_free(void* ptr) {
+    std::free(ptr);
+}
+#endif
+
 namespace engine::ecs {
 
 // ── ComponentColumn ─────────────────────────────────────
@@ -17,13 +34,13 @@ ComponentColumn::ComponentColumn(usize elem_size, usize elem_align, u32 capacity
     : elem_size_(elem_size), elem_align_(elem_align), capacity_(capacity)
 {
     if (capacity_ > 0) {
-        data_ = static_cast<u8*>(std::aligned_alloc(elem_align_, elem_size_ * capacity_));
+        data_ = static_cast<u8*>(engine_aligned_alloc(elem_align_, elem_size_ * capacity_));
         if (!data_) throw std::bad_alloc{};
     }
 }
 
 ComponentColumn::~ComponentColumn() {
-    if (data_) std::free(data_);
+    if (data_) engine_aligned_free(data_);
 }
 
 ComponentColumn::ComponentColumn(ComponentColumn&& o) noexcept
@@ -37,7 +54,7 @@ ComponentColumn::ComponentColumn(ComponentColumn&& o) noexcept
 
 ComponentColumn& ComponentColumn::operator=(ComponentColumn&& o) noexcept {
     if (this != &o) {
-        if (data_) std::free(data_);
+        if (data_) engine_aligned_free(data_);
         data_ = o.data_; elem_size_ = o.elem_size_; elem_align_ = o.elem_align_;
         count_ = o.count_; capacity_ = o.capacity_;
         o.data_ = nullptr; o.count_ = 0; o.capacity_ = 0;
@@ -73,12 +90,12 @@ void ComponentColumn::swap_remove(u32 index) {
 
 void ComponentColumn::grow() {
     u32 new_cap = capacity_ == 0 ? 64 : capacity_ * 2;
-    u8* new_data = static_cast<u8*>(std::aligned_alloc(elem_align_, elem_size_ * new_cap));
+    u8* new_data = static_cast<u8*>(engine_aligned_alloc(elem_align_, elem_size_ * new_cap));
     if (!new_data) throw std::bad_alloc{};
     if (data_ && count_ > 0) {
         std::memcpy(new_data, data_, elem_size_ * count_);
     }
-    if (data_) std::free(data_);
+    if (data_) engine_aligned_free(data_);
     data_ = new_data;
     capacity_ = new_cap;
 }

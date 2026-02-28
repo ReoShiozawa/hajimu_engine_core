@@ -8,6 +8,7 @@
 
 #include <engine/core/types.hpp>
 #include <engine/ecs/entity.hpp>
+#include <memory>
 #include <vector>
 #include <functional>
 
