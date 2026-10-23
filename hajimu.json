@@ -1,11 +1,12 @@
 {
+  "schema_version": 2,
   "name": "engine_core",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "はじむ用ゲームエンジンコア — Archetype ECS / RenderGraph / VFS / Action Input / TaskGraph",
   "author": "Reo Shiozawa",
   "license": "MIT",
   "language": "C++20",
-  "repository": "https://github.com/ReoShiozawa/engine_core",
+  "repository": "https://github.com/ReoShiozawa/hajimu_engine_core",
   "keywords": [
     "game-engine",
     "ecs",
@@ -14,11 +15,11 @@
     "audio"
   ],
   "dependencies": {},
-  "plugin": "build/engine_core.hjp",
+  "entry": "build/engine_core.hjp",
   "platforms": [
     "macos",
     "linux",
     "windows"
   ],
-  "ビルド": "make build/engine_core.hjp"
+  "build": "make build/engine_core.hjp"
 }

@@ -56,6 +56,6 @@
 #include <engine/build/build_pipeline.hpp>
 
 namespace engine {
-    constexpr const char* VERSION     = "1.0.0";
+    constexpr const char* VERSION     = "1.1.0";
     constexpr const char* ENGINE_NAME = "はじむ Engine Core";
 }

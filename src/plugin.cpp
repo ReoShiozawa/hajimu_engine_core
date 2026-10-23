@@ -167,6 +167,7 @@ static Value fn_entity_spawn(int argc, Value* argv) {
 }
 
 static Value fn_entity_despawn(int argc, Value* argv) {
+    (void)argc;
     if (!g_world) return hajimu_null();
     Entity e = resolve_entity(argv);
     g_world->despawn(e);
@@ -175,6 +176,7 @@ static Value fn_entity_despawn(int argc, Value* argv) {
 }
 
 static Value fn_entity_alive(int argc, Value* argv) {
+    (void)argc;
     if (!g_world) return hajimu_bool(false);
     Entity e = resolve_entity(argv);
     return hajimu_bool(g_world->alive(e));
@@ -195,7 +197,7 @@ static Value fn_scene_add(int argc, Value* argv) {
     Entity e = resolve_entity(argv);
     std::string name = "Node";
     if (argc >= 2 && argv[1].type == VALUE_STRING) {
-        name = std::string(argv[1].string.data, argv[1].string.length);
+        name = std::string(argv[1].string.data, argv[1].string.byte_length);
     }
     Entity parent = Entity::null();
     if (argc >= 3 && argv[2].type == VALUE_NUMBER) {
@@ -206,15 +208,17 @@ static Value fn_scene_add(int argc, Value* argv) {
 }
 
 static Value fn_scene_remove(int argc, Value* argv) {
+    (void)argc;
     if (!g_scene) return hajimu_null();
     g_scene->remove_node(resolve_entity(argv));
     return hajimu_null();
 }
 
 static Value fn_scene_find(int argc, Value* argv) {
+    (void)argc;
     if (!g_scene) return hajimu_null();
     if (argv[0].type == VALUE_STRING) {
-        std::string name(argv[0].string.data, argv[0].string.length);
+        std::string name(argv[0].string.data, argv[0].string.byte_length);
         Entity e = g_scene->find_by_name(name);
         return entity_to_value(e);
     }
@@ -269,13 +273,13 @@ static Value fn_input_begin_frame(int argc, Value* argv) {
 
 static Value fn_action_pressed(int argc, Value* argv) {
     if (!g_actions || !g_input || argc < 1) return hajimu_bool(false);
-    std::string name(argv[0].string.data, argv[0].string.length);
+    std::string name(argv[0].string.data, argv[0].string.byte_length);
     return hajimu_bool(g_actions->action_pressed(name, *g_input));
 }
 
 static Value fn_action_down(int argc, Value* argv) {
     if (!g_actions || !g_input || argc < 1) return hajimu_bool(false);
-    std::string name(argv[0].string.data, argv[0].string.length);
+    std::string name(argv[0].string.data, argv[0].string.byte_length);
     return hajimu_bool(g_actions->action_down(name, *g_input));
 }
 
@@ -286,8 +290,8 @@ static Value fn_action_down(int argc, Value* argv) {
 static Value fn_vfs_mount(int argc, Value* argv) {
     if (!g_vfs || argc < 2) return hajimu_bool(false);
     MountPoint mp;
-    mp.prefix = std::string(argv[0].string.data, argv[0].string.length);
-    mp.real_path = std::string(argv[1].string.data, argv[1].string.length);
+    mp.prefix = std::string(argv[0].string.data, argv[0].string.byte_length);
+    mp.real_path = std::string(argv[1].string.data, argv[1].string.byte_length);
     if (argc >= 3) mp.priority = static_cast<i32>(argv[2].number);
     g_vfs->mount(mp);
     return hajimu_bool(true);
@@ -295,7 +299,7 @@ static Value fn_vfs_mount(int argc, Value* argv) {
 
 static Value fn_vfs_read(int argc, Value* argv) {
     if (!g_vfs || argc < 1) return hajimu_null();
-    std::string path(argv[0].string.data, argv[0].string.length);
+    std::string path(argv[0].string.data, argv[0].string.byte_length);
     auto text = g_vfs->read_text(path);
     if (!text) return hajimu_null();
     return hajimu_string(text->c_str());
@@ -303,7 +307,7 @@ static Value fn_vfs_read(int argc, Value* argv) {
 
 static Value fn_vfs_exists(int argc, Value* argv) {
     if (!g_vfs || argc < 1) return hajimu_bool(false);
-    std::string path(argv[0].string.data, argv[0].string.length);
+    std::string path(argv[0].string.data, argv[0].string.byte_length);
     return hajimu_bool(g_vfs->exists(path));
 }
 
@@ -356,7 +360,7 @@ static Value fn_physics_sync(int argc, Value* argv) {
 static Value fn_render_add_pass(int argc, Value* argv) {
     if (!g_render_graph || argc < 1) return hajimu_null();
     RenderPass pass;
-    pass.name = std::string(argv[0].string.data, argv[0].string.length);
+    pass.name = std::string(argv[0].string.data, argv[0].string.byte_length);
     g_render_graph->add_pass(std::move(pass));
     return hajimu_bool(true);
 }
@@ -388,7 +392,7 @@ static Value fn_render_clear(int argc, Value* argv) {
 static Value fn_log_info(int argc, Value* argv) {
     if (argc < 1) return hajimu_null();
     if (argv[0].type == VALUE_STRING) {
-        ENG_INFO("%s", std::string(argv[0].string.data, argv[0].string.length).c_str());
+        ENG_INFO("%s", std::string(argv[0].string.data, argv[0].string.byte_length).c_str());
     }
     return hajimu_null();
 }
@@ -396,7 +400,7 @@ static Value fn_log_info(int argc, Value* argv) {
 static Value fn_log_warn(int argc, Value* argv) {
     if (argc < 1) return hajimu_null();
     if (argv[0].type == VALUE_STRING) {
-        ENG_WARN("%s", std::string(argv[0].string.data, argv[0].string.length).c_str());
+        ENG_WARN("%s", std::string(argv[0].string.data, argv[0].string.byte_length).c_str());
     }
     return hajimu_null();
 }
@@ -404,7 +408,7 @@ static Value fn_log_warn(int argc, Value* argv) {
 static Value fn_log_error(int argc, Value* argv) {
     if (argc < 1) return hajimu_null();
     if (argv[0].type == VALUE_STRING) {
-        ENG_ERROR("%s", std::string(argv[0].string.data, argv[0].string.length).c_str());
+        ENG_ERROR("%s", std::string(argv[0].string.data, argv[0].string.byte_length).c_str());
     }
     return hajimu_null();
 }
@@ -431,7 +435,7 @@ static Value fn_flush_commands(int argc, Value* argv) {
 
 static Value fn_sc_comp_register(int argc, Value* argv) {
     if (argc < 1 || argv[0].type != VALUE_STRING) return hajimu_number(0);
-    std::string name(argv[0].string.data, argv[0].string.length);
+    std::string name(argv[0].string.data, argv[0].string.byte_length);
     int def_sz = (argc >= 2 && argv[1].type == VALUE_NUMBER) ? (int)argv[1].number : 4;
 
     // 既存チェック
@@ -447,7 +451,7 @@ static Value fn_sc_comp_register(int argc, Value* argv) {
 
 static Value fn_sc_comp_find(int argc, Value* argv) {
     if (argc < 1 || argv[0].type != VALUE_STRING) return hajimu_number(0);
-    std::string name(argv[0].string.data, argv[0].string.length);
+    std::string name(argv[0].string.data, argv[0].string.byte_length);
     auto it = g_sc_name_map.find(name);
     return hajimu_number(it != g_sc_name_map.end() ? it->second : 0);
 }
@@ -472,7 +476,7 @@ static Value fn_sc_comp_set(int argc, Value* argv) {
 
     std::string csv;
     if (argv[2].type == VALUE_STRING)
-        csv = std::string(argv[2].string.data, argv[2].string.length);
+        csv = std::string(argv[2].string.data, argv[2].string.byte_length);
     auto data = sc_parse_csv(csv);
 
     g_sc_data[eid][cid] = data;
@@ -689,6 +693,8 @@ static const int ENGINE_FUNC_COUNT = sizeof(engine_functions) / sizeof(engine_fu
 // =============================================================================
 
 extern "C" {
+
+HAJIMU_PLUGIN_ABI_EXPORT()
 
 HAJIMU_PLUGIN_EXPORT HajimuPluginInfo* hajimu_plugin_init(void) {
     static HajimuPluginInfo info = {

@@ -3,7 +3,7 @@
 **はじむ版 Unity** — C++20/23 によるデータ指向ゲームエンジンコア
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-1.0.0-green.svg)]()
+[![Version](https://img.shields.io/badge/version-1.1.0-green.svg)]()
 [![C++](https://img.shields.io/badge/C%2B%2B-20%2F23-orange.svg)]()
 
 ## 概要
